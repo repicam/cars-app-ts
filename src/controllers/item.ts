@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { handleHttp } from '../utils/error.handle'
+import { createNewItem } from '../services/item'
 
 const getItem = ( req: Request, res: Response ) => {
   try {
@@ -17,9 +18,10 @@ const getItems = ( req: Request, res: Response ) => {
   }
 }
 
-const createItem = ( req: Request, res: Response ) => {
+const createItem = async ( { body }: Request, res: Response ) => {
   try {
-
+    const newItem = await createNewItem( body )
+    res.status( 201 ).json( { data: newItem } )
   } catch ( error ) {
     handleHttp( res, 'Error creating item' )
   }
