@@ -1,9 +1,14 @@
 import { Request, Response, Router } from 'express'
+import { createItem, deleteItem, getItem, getItems, updateItem } from '../controllers/item'
 
 const router = Router()
 
-router.get( '/', ( req: Request, res: Response ) => {
-  res.send( { data: 'Hola items' } )
-} )
+router.route( '/' )
+  .get( getItems )
+  .post( createItem )
+router.route( '/:id' )
+  .get( getItem )
+  .patch( updateItem )
+  .delete( deleteItem )
 
 export { router }
