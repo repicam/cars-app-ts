@@ -3,15 +3,25 @@ import { Item } from '../interfaces/item.interface'
 
 const ItemSchema = new Schema<Item>(
   {
-    name: String,
+    name: {
+      type: String,
+      required: true
+    },
     color: String,
     gas: {
       type: String,
-      enum: [ 'gasoline', 'electric' ]
+      enum: [ 'gasoline', 'electric' ],
+      required: true
     },
-    year: Number,
+    year: {
+      type: Number,
+      required: true
+    },
     description: String,
-    price: Number
+    price: {
+      type: Number,
+      required: true
+    }
   },
   {
     timestamps: true,
