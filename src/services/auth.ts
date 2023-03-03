@@ -5,13 +5,13 @@ import { encryptPassword, verifiedPassword } from '../utils/bcrypt.handle'
 import { generateToken } from '../utils/jwt.handle'
 
 const registerUser = async ( { email, password, name }: User ) => {
-  const emailExists = await UserModel.find( { email } )
+  const emailExists = await UserModel.findOne( { email } )
   if ( emailExists ) return
 
   const hashPassword = await encryptPassword( password )
   const newUser = await UserModel.create( { email, password: hashPassword, name } )
 
-  const token = await generateToken( newUser.email )
+  const token = generateToken( `${ newUser._id }` )
   const data = {
     token,
     user: newUser
@@ -28,7 +28,7 @@ const loginUser = async ( { email, password }: Auth ) => {
 
   if ( !correctPass ) return
 
-  const token = await generateToken( userExists.email )
+  const token = generateToken( `${ userExists._id }` )
   const data = {
     token,
     user: userExists
