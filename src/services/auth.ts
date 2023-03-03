@@ -1,17 +1,40 @@
 import { Auth } from '../interfaces/auth.interface'
 import { User } from '../interfaces/user.interface'
 import UserModel from '../models/user'
-import { encryptPassword } from '../utils/bcrypt.handle'
+import { encryptPassword, verifiedPassword } from '../utils/bcrypt.handle'
+import { generateToken } from '../utils/jwt.handle'
 
 const registerUser = async ( { email, password, name }: User ) => {
   const emailExists = await UserModel.find( { email } )
   if ( emailExists ) return
+
   const hashPassword = await encryptPassword( password )
   const newUser = await UserModel.create( { email, password: hashPassword, name } )
-  return newUser
+
+  const token = await generateToken( newUser.email )
+  const data = {
+    token,
+    user: newUser
+  }
+
+  return data
 }
 
 const loginUser = async ( { email, password }: Auth ) => {
+  const userExists = await UserModel.findOne( { email } )
+  if ( !userExists ) return
+
+  const correctPass = await verifiedPassword( password, userExists.password )
+
+  if ( !correctPass ) return
+
+  const token = await generateToken( userExists.email )
+  const data = {
+    token,
+    user: userExists
+  }
+
+  return data
 }
 
 export { registerUser, loginUser }
